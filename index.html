@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <title>Vote</title>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="container-title">
+            <h2>上海交通大学密西根学院学生会第十六届主席团竞选</h2>
+        </div>
+        <div class="container-img row">
+            <div class="col-sm-3 image">
+                <img src="img/Belief.png" height="200" width="200" style="float:left">
+            </div>
+            <div class="col-sm-2 score">
+                <h1 id="score_1" class="text-center">0</h1>
+            </div>
+            <div class="col-sm-2 score">
+                <h1 class="text-center">VS</h1>
+            </div>
+            <div class="col-sm-2 score">
+                <h1 id="score_2" class="text-center">0</h1>
+            </div>
+            <div class="col-sm-3 image">
+                <img src="img/Butterfly.png" height="200" style="float:right">
+            </div>
+        </div>
+
+        <div class="container-giveup">
+            <span>有效票数/总票数：</span>
+            <span id="giveup">0/0</span>
+        </div>
+
+        <div class="container-canvas" style="transform: rotate(270deg)">
+            <canvas id="waterfall_1"></canvas>
+            <canvas id="waterfall_2" style="transform: rotate(180deg)"></canvas>
+        </div>
+
+
+        <div class="container-button row">
+            <div class="col-sm-1" style="top:5%">
+                <button class="btn btn-default btn-lg center-block pull-right" id="button_1_revert">
+				<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+			</button>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-default-1 btn-lg center-block" id="button_1">JI Belief</button>
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-default-3 btn-lg center-block" id="button_giveup"></button>
+            </div>
+            <div class="col-sm-4">
+                <button class="btn btn-default-2 btn-lg center-block" id="button_2">JI Butterfly</button>
+            </div>
+            <div class="col-sm-1" style="top:5%">
+                <button class="btn btn-default btn-lg center-block pull-left" id="button_2_revert">
+				<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+			</button>
+            </div>
+        </div>
+
+        <div class="container-footer">
+            <h3>Powered by: 刘逸灏 周妍君 黄奕东</h3>
+        </div>
+
+    </div>
+
+    <script src='js/jquery.js'></script>
+    <script src="js/index.js"></script>
+    <script src="js/jquery.rotate.min.js"></script>
+    <script src="js/prefixfree.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        var score_1 = 0,
+            score_2 = 0,
+            giveup = 0;
+        var $score_1 = $("#score_1");
+        var $score_2 = $("#score_2");
+
+        function setSize(a) {
+            var c1 = document.getElementById('waterfall_1');
+            var c2 = document.getElementById('waterfall_2');
+            c2.style.top = (a) + 'px';
+            c1.height = a;
+            c2.height = width * 2 - a;
+            waterfall_1.ch = a + delta;
+            waterfall_2.ch = width * 2 - a + delta;
+        }
+
+        function changeSize(begin, end) {
+            if (Math.abs(begin - end) < 10) {
+                setSize(end);
+                return;
+            }
+            if (begin < end) {
+                setSize(begin += 10);
+            } else {
+                setSize(begin -= 10);
+            }
+            setTimeout("changeSize(" + begin + "," + end + ")", 20);
+        }
+
+        function compare(a, b) {
+            return a == b ? 0 : a < b ? -1 : 1;
+        }
+
+        function changeVote(a, b) {
+            var begin = 2 * width * (score_1 + 10.) / (score_1 + score_2 + 20.);
+            a == 1 ? score_1 += b : score_2 += b;
+            var end = 2 * width * (score_1 + 10.) / (score_1 + score_2 + 20.);
+            $score_1.html(score_1);
+            $score_2.html(score_2);
+            if (score_1 == score_2) {
+                $score_1.css('color', '#ffffff');
+                $score_2.css('color', '#ffffff');
+            } else if (score_1 > score_2) {
+                $score_1.css('color', '#E13300');
+                $score_2.css('color', '#41a83e');
+            } else {
+                $score_1.css('color', '#41a83e');
+                $score_2.css('color', '#E13300');
+            }
+            //$score_1.css('font-size', (60 + 20 * compare(score_1, score_2)) + 'pt');
+            //$score_2.css('font-size', (60 + 20 * compare(score_2, score_1)) + 'pt');
+
+            changeSize(begin, end);
+        }
+
+        $(document).ready(function() {
+            var $button_1 = $("#button_1");
+            var $button_2 = $("#button_2");
+
+            buttonFunc = function(f) {
+                $button_1.attr('disabled', f);
+                $button_2.attr('disabled', f);
+                if (f) {
+                    setTimeout("buttonFunc(false)", 1000);
+                }
+            };
+
+            giveupFunc = function() {
+                $("#giveup").html((score_1 + score_2) + '/' + (score_1 + score_2 + giveup));
+            };
+
+            $button_1.click(function() {
+                changeVote(1, 1);
+                giveupFunc();
+                buttonFunc(true);
+            });
+            $button_2.click(function() {
+                changeVote(2, 1);
+                giveupFunc();
+                buttonFunc(true);
+            });
+            $("#button_1_revert").click(function() {
+                changeVote(1, -1);
+                giveupFunc();
+            });
+            $("#button_2_revert").click(function() {
+                changeVote(2, -1);
+                giveupFunc();
+            });
+            $("#button_giveup").click(function() {
+                ++giveup;
+                giveupFunc();
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+body {
+    /* background: url(../img/JIsign.png); */
+}
+
+.container {
+    width: 1500px;
+}
+
+.container-canvas {
+    height: 1500px;
+    position: relative;
+    top: -550px;
+    width: 100px;
+    margin: 0 auto;
+}
+
+.container-button {
+    height: 500px;
+    position: relative;
+    top: -1200px;
+    margin: 0 auto;
+}
+
+.container-img {
+    height: 200px;
+    position: relative;
+    top: 75px;
+}
+
+.container-footer {
+    position: relative;
+    top: -1600px;
+    float: right;
+}
+
+.score {
+    top: 15%;
+}
+
+.image {
+    opacity: 1;
+}
+
+canvas {
+    display: inline;
+    position: absolute;
+}
+
+h1 {
+    font-size: 75pt;
+    color: rgb(0, 0, 0);
+    font-family: "华文行楷";
+}
+
+h2 {
+    font-size: 45pt;
+    color: rgb(0, 0, 0);
+    font-family: "隶书";
+}
+
+h3 {
+    font-size: 12pt;
+    color: rgb(0, 0, 0);
+    font-family: "Brush Script MT", "隶书";
+}
+
+#waterfall_1 {
+    left: 0;
+    top: 0;
+}
+
+#waterfall_2 {
+    left: 0;
+    top: 750px;
+}
+
+.btn-default-1 {
+    background-color: #f9f885;
+    padding: 20px 170px;
+    font-family: "华文行楷";
+    font-size: 30pt;
+    font-weight: 900;
+}
+
+.btn-default-2 {
+    background-color: #73c4f1;
+    padding: 20px 115px;
+    font-family: "华文行楷";
+    font-size: 30pt;
+    font-weight: 900;
+}
+
+.btn-default-3 {
+    background: url(../img/giveup.png) no-repeat;
+    background-size: 80px 80px;
+    padding: 80px 40px 0px 40px;
+}
+
+.container-giveup {
+    font-family: "楷体";
+    font-weight: 900;
+    text-align: center;
+    height: 20px;
+    position: relative;
+    top: 432px;
+    color: rgb(0, 0, 0);
+    font-size: 24px;
+}
+
+.container-title {
+    font-family: "楷体";
+    font-weight: 900;
+    text-align: center;
+    height: 200px;
+    position: relative;
+    top: 100px;
+    color: rgb(0, 0, 0);
+    font-size: 36px;
+}
