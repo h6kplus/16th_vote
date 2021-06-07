@@ -94,6 +94,14 @@ h3 {
     background: url(../img/giveup.png) no-repeat;
     background-size: 80px 80px;
     padding: 80px 40px 0px 40px;
+    margin: 5px 20px;
+}
+
+.btn-default-4 {
+    background: url(../img/abandon.png) no-repeat;
+    background-size: 80px 80px;
+    padding: 80px 40px 0px 40px;
+    margin: 5px 20px;
 }
 
 .container-giveup {

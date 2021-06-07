@@ -14,7 +14,7 @@
 <body>
     <div class="container">
         <div class="container-title">
-            <h2>上海交通大学密西根学院学生会第十六届主席团竞选</h2>
+            <h2>上海交通大学密西根学院学生会第十六届主席团选举</h2>
         </div>
         <div class="container-img row">
             <div class="col-sm-3 image">
@@ -34,9 +34,10 @@
             </div>
         </div>
 
+
         <div class="container-giveup">
-            <span>有效票数/总票数：</span>
-            <span id="giveup">0/0</span>
+            <span>有效票数/弃票数/总票数：</span>
+            <span id="giveup">0/0/0</span>
         </div>
 
         <div class="container-canvas" style="transform: rotate(270deg)">
@@ -54,8 +55,11 @@
             <div class="col-sm-4">
                 <button class="btn btn-default-1 btn-lg center-block" id="button_1">JI Belief</button>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-1">
                 <button class="btn btn-default-3 btn-lg center-block" id="button_giveup"></button>
+            </div>
+            <div class="col-sm-1">
+                <button class="btn btn-default-4 btn-lg center-block" id="button_abandon"></button>
             </div>
             <div class="col-sm-4">
                 <button class="btn btn-default-2 btn-lg center-block" id="button_2">JI Butterfly</button>
@@ -82,6 +86,7 @@
     <script type="text/javascript">
         var score_1 = 0,
             score_2 = 0,
+            abandon = 0,
             giveup = 0;
         var $score_1 = $("#score_1");
         var $score_2 = $("#score_2");
@@ -120,8 +125,8 @@
             $score_1.html(score_1);
             $score_2.html(score_2);
             if (score_1 == score_2) {
-                $score_1.css('color', '#ffffff');
-                $score_2.css('color', '#ffffff');
+                $score_1.css('color', '#000000');
+                $score_2.css('color', '#000000');
             } else if (score_1 > score_2) {
                 $score_1.css('color', '#E13300');
                 $score_2.css('color', '#41a83e');
@@ -148,7 +153,7 @@
             };
 
             giveupFunc = function() {
-                $("#giveup").html((score_1 + score_2) + '/' + (score_1 + score_2 + giveup));
+                $("#giveup").html((score_1 + score_2) + '/' + giveup + '/' + (score_1 + score_2 + giveup + abandon));
             };
 
             $button_1.click(function() {
@@ -171,6 +176,10 @@
             });
             $("#button_giveup").click(function() {
                 ++giveup;
+                giveupFunc();
+            });
+            $("#button_abandon").click(function() {
+                ++abandon;
                 giveupFunc();
             });
         });
