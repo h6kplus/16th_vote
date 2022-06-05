@@ -51,6 +51,7 @@ class DeformableDETR(nn.Module):
         self.num_queries = num_queries
         self.transformer = transformer
         hidden_dim = transformer.d_model
+        self.preprocess=nn.Conv2d(27,3,kernel_size=3,stride=1,padding=1)
         self.class_embed = nn.Linear(hidden_dim, num_classes)
         self.bbox_embed = MLP(hidden_dim, hidden_dim, 4, 3)
         self.num_feature_levels = num_feature_levels
@@ -126,8 +127,13 @@ class DeformableDETR(nn.Module):
                - "aux_outputs": Optional, only returned when auxilary losses are activated. It is a list of
                                 dictionnaries containing the two above keys for each decoder layer.
         """
+        
         if not isinstance(samples, NestedTensor):
             samples = nested_tensor_from_tensor_list(samples)
+        data=samples.tensors
+        data=self.preprocess(data)
+        print(data.shape)
+        samples.tensors=data
         features, pos = self.backbone(samples)
 
         srcs = []

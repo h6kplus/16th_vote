@@ -48,11 +48,33 @@ class CocoDetection(VisionDataset):
         for index, img_id in zip(tqdm.trange(len(self.ids)), self.ids):
             if index % self.local_size != self.local_rank:
                 continue
-            path = self.coco.loadImgs(img_id)[0]['file_name']
+            path = self.coco.loadImgs(img_id)[0]['rgb_name']
+            with open(os.path.join(self.root, path), 'rb') as f:
+                self.cache[path] = f.read()
+            path = self.coco.loadImgs(img_id)[0]['depth_name']
+            with open(os.path.join(self.root, path), 'rb') as f:
+                self.cache[path] = f.read()
+            path = self.coco.loadImgs(img_id)[0]['seg_name']
             with open(os.path.join(self.root, path), 'rb') as f:
                 self.cache[path] = f.read()
 
     def get_image(self, path):
+        if self.cache_mode:
+            if path not in self.cache.keys():
+                with open(os.path.join(self.root, path), 'rb') as f:
+                    self.cache[path] = f.read()
+            return Image.open(BytesIO(self.cache[path])).convert('RGB')
+        return Image.open(os.path.join(self.root, path)).convert('RGB')
+
+
+    def get_depth(self, path):
+        if self.cache_mode:
+            if path not in self.cache.keys():
+                with open(os.path.join(self.root, path), 'rb') as f:
+                    self.cache[path] = f.read()
+            return Image.open(BytesIO(self.cache[path])).convert('L')
+        return Image.open(os.path.join(self.root, path)).convert('L')
+    def get_sem(self, path):
         if self.cache_mode:
             if path not in self.cache.keys():
                 with open(os.path.join(self.root, path), 'rb') as f:
@@ -71,14 +93,21 @@ class CocoDetection(VisionDataset):
         img_id = self.ids[index]
         ann_ids = coco.getAnnIds(imgIds=img_id)
         target = coco.loadAnns(ann_ids)
-
-        path = coco.loadImgs(img_id)[0]['file_name']
-
+        print(self.transforms)
+        path = coco.loadImgs(img_id)[0]['rgb_name']
         img = self.get_image(path)
         if self.transforms is not None:
             img, target = self.transforms(img, target)
+        depth_path=coco.loadImgs(img_id)[0]['depth_name']
+        depth = self.get_depth(depth_path)
+        if self.transforms is not None:
+            depth = self.target_transforms(depth)
+        sem_path=coco.loadImgs(img_id)[0]['seg_name']
+        sem = self.get_sem(sem_path)
+        if self.transforms is not None:
+            sem = self.target_transforms(sem)
 
-        return img, target
+        return img,depth,sem, target
 
     def __len__(self):
         return len(self.ids)

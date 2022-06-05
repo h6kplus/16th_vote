@@ -1,0 +1,4 @@
+# ninja log v5
+0	4506	1654126085	/home/owenhji/sled/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/owenhji/sled/Deformable-DETR/models/ops/src/cpu/ms_deform_attn_cpu.o	739a91f7d2c072ff
+1	13799	1654126094	/home/owenhji/sled/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/owenhji/sled/Deformable-DETR/models/ops/src/vision.o	aa6d476386a8c9f1
+1	14324	1654126095	/home/owenhji/sled/Deformable-DETR/models/ops/build/temp.linux-x86_64-3.7/home/owenhji/sled/Deformable-DETR/models/ops/src/cuda/ms_deform_attn_cuda.o	9038de828daa8d62

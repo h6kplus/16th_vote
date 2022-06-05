@@ -18,6 +18,7 @@ import torch
 import torch.utils.data
 from pycocotools import mask as coco_mask
 
+import torch.nn.functional as F
 from .torchvision_datasets import CocoDetection as TvCocoDetection
 from util.misc import get_local_rank, get_local_size
 import datasets.transforms as T
@@ -31,12 +32,18 @@ class CocoDetection(TvCocoDetection):
         self.prepare = ConvertCocoPolysToMask(return_masks)
 
     def __getitem__(self, idx):
-        img, target = super(CocoDetection, self).__getitem__(idx)
+        img,depth,seg, target = super(CocoDetection, self).__getitem__(idx)
+        # print(target)
         image_id = self.ids[idx]
         target = {'image_id': image_id, 'annotations': target}
         img, target = self.prepare(img, target)
         if self._transforms is not None:
-            img, target = self._transforms(img, target)
+            img,depth,seg, target = self._transforms(img,depth,seg, target)
+        # print(img.shape,depth.shape,seg.shape)
+        seg=F.one_hot(seg.reshape(seg.shape[1],-1).to(torch.int64),num_classes=23).permute(2,0,1)
+        print(seg.shape)
+        img= torch.cat((img,depth,seg),0)
+        print(target)
         return img, target
 
 
@@ -72,8 +79,11 @@ class ConvertCocoPolysToMask(object):
         anno = [obj for obj in anno if 'iscrowd' not in obj or obj['iscrowd'] == 0]
 
         boxes = [obj["bbox"] for obj in anno]
+        dddboxes = [obj["3dbbox"] for obj in anno]
         # guard against no boxes via resizing
+        # print()
         boxes = torch.as_tensor(boxes, dtype=torch.float32).reshape(-1, 4)
+        dddboxes = torch.as_tensor(dddboxes, dtype=torch.float32).reshape(-1, 9)
         boxes[:, 2:] += boxes[:, :2]
         boxes[:, 0::2].clamp_(min=0, max=w)
         boxes[:, 1::2].clamp_(min=0, max=h)
@@ -98,11 +108,12 @@ class ConvertCocoPolysToMask(object):
         classes = classes[keep]
         if self.return_masks:
             masks = masks[keep]
-        if keypoints is not None:
+        if keypoints is not None: 
             keypoints = keypoints[keep]
 
         target = {}
         target["boxes"] = boxes
+        target["3dboxes"] = dddboxes
         target["labels"] = classes
         if self.return_masks:
             target["masks"] = masks
@@ -121,6 +132,7 @@ class ConvertCocoPolysToMask(object):
 
         return image, target
 
+# def train_transform(image,)
 
 def make_coco_transforms(image_set):
 
@@ -159,8 +171,8 @@ def build(image_set, args):
     assert root.exists(), f'provided COCO path {root} does not exist'
     mode = 'instances'
     PATHS = {
-        "train": (root / "train2017", root / "annotations" / f'{mode}_train2017.json'),
-        "val": (root / "val2017", root / "annotations" / f'{mode}_val2017.json'),
+        "train": (root / "train", root / 'train.json'),
+        "val": (root / "val", root / 'val.json'),
     }
 
     img_folder, ann_file = PATHS[image_set]
